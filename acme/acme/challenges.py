@@ -277,11 +277,13 @@ class DNS01(KeyAuthorizationChallenge):
     def validation_domain_name(self, name: str) -> str:
         """Domain name for TXT validation record.
 
-        :param str name: Domain name being validated.
+        :param str name: Domain name being validated; may contain
+            a leading wildcard.
         :rtype: str
 
         """
-        return f"{self.LABEL}.{name}"
+        return (f"*.{self.LABEL}.{name[2:]}" if name[:2] == "*."
+            else f"{self.LABEL}.{name}")
 
 
 @ChallengeResponse.register
