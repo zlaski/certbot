@@ -92,15 +92,15 @@ class DNSAuthenticator(common.Plugin, interfaces.Authenticator, metaclass=abc.AB
     def cleanup(self, achalls: List[achallenges.AnnotatedChallenge]) -> None:  # pylint: disable=missing-function-docstring
         if self._attempt_cleanup:
             for achall in achalls:
-            if achall.domain[:2] == "*.":
-                domain = achall.domain[2:]
-                validation_domain_name = "*." + achall.validation_domain_name(domain)
-            else:
-                domain = achall.domain
-                validation_domain_name = achall.validation_domain_name(domain)
+                if achall.domain[:2] == "*.":
+                    domain = achall.domain[2:]
+                    validation_domain_name = "*." + achall.validation_domain_name(domain)
+                else:
+                    domain = achall.domain
+                    validation_domain_name = achall.validation_domain_name(domain)
 
-            validation = achall.validation(achall.account_key)
-            self._cleanup(domain, validation_domain_name, validation)
+                validation = achall.validation(achall.account_key)
+                self._cleanup(domain, validation_domain_name, validation)
 
     @abc.abstractmethod
     def _setup_credentials(self) -> None:  # pragma: no cover
