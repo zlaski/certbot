@@ -294,8 +294,10 @@ class AuthHandler:
 
         for index in path:
             challb = authzr.body.challenges[index]
+            subdomain = ("*." + authzr.body.identifier.value if authzr.body.wildcard
+                else authzr.body.identifier.value)
             achalls.append(challb_to_achall(
-                challb, self.account.key, authzr.body.identifier.value))
+                challb, self.account.key, subdomain))
 
         return achalls
 
@@ -304,7 +306,9 @@ class AuthHandler:
         if not self.account:
             raise errors.Error("Account is not set.")
         problems: Dict[str, List[achallenges.AnnotatedChallenge]] = {}
-        failed_achalls = [challb_to_achall(challb, self.account.key, authzr.body.identifier.value)
+        subdomain = ("*." + authzr.body.identifier.value if authzr.body.wildcard
+            else authzr.body.identifier.value)
+        failed_achalls = [challb_to_achall(challb, self.account.key, subdomain)
                         for authzr in failed_authzrs for challb in authzr.body.challenges
                         if challb.error]
 
