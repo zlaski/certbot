@@ -72,6 +72,7 @@ def reconstitute(config: configuration.NamespaceConfig,
 
     """
     try:
+        logger.debug("Renewal configuration file: %s", full_path)
         renewal_candidate = storage.RenewableCert(full_path, config)
     except (errors.CertStorageError, IOError) as error:
         logger.error("Renewal configuration file %s is broken.", full_path)
@@ -392,6 +393,7 @@ def renew_cert(config: configuration.NamespaceConfig, domains: Optional[List[str
         _update_renewal_params_from_key(new_key, config)
     else:
         new_key = None
+    logger.debug("Domains: %s", domains)
     new_cert, new_chain, new_key, _ = le_client.obtain_certificate(domains, new_key)
     if config.dry_run:
         logger.debug("Dry run: skipping updating lineage at %s", os.path.dirname(lineage.cert))

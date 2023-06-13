@@ -126,7 +126,7 @@ def _get_and_save_cert(le_client: client.Client, config: configuration.Namespace
                     domains=internal_display_util.summarize_domain_list(domains or lineage.names())
                 )
             )
-            renewal.renew_cert(config, domains, le_client, lineage)
+            renewal.renew_ce_find_domains_or_certnamert(config, domains, le_client, lineage)
         else:
             # TREAT AS NEW REQUEST
             if domains is None:
@@ -501,6 +501,7 @@ def _find_domains_or_certname(config: configuration.NamespaceConfig,
     # with that certname
     elif certname:
         domains = cert_manager.domains_for_certname(config, certname)
+    print("Domains: %s", domains)
 
     # that certname might not have existed, or there was a problem.
     # try to get domains from the user.

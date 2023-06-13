@@ -6,7 +6,6 @@ dist*/
 /venv*/
 /.tox/
 /releases*/
-/log*
 letsencrypt.log
 certbot.log
 poetry.lock
