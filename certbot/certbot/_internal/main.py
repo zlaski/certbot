@@ -86,6 +86,28 @@ def _suggest_donation_if_appropriate(config: configuration.NamespaceConfig) -> N
     )
 
 
+def _remove_wildcards(domains: Optional[List[str]]) -> Optional[List[str]]:
+    """
+    Remove wildcards from domains, and get rid of any resulting duplicates.
+
+    Since both 'foo.bar' and '*.foo.bar' result in a challenge against 'foo.bar',
+    duplication can arise.
+    """
+
+    if not domains:
+        return domains
+
+    trimmed_domains: List[str] = []
+
+    for domain in domains:
+        if domain[:2] == "*.":
+            domain = domain[2:]
+        if not domain in trimmed_domains:
+            trimmed_domains.append(domain)
+
+    return trimmed_domains
+
+
 def _get_and_save_cert(le_client: client.Client, config: configuration.NamespaceConfig,
                        domains: Optional[List[str]] = None, certname: Optional[str] = None,
                        lineage: Optional[storage.RenewableCert] = None
@@ -115,6 +137,8 @@ def _get_and_save_cert(le_client: client.Client, config: configuration.Namespace
 
     """
     hooks.pre_hook(config)
+    domains = _remove_wildcards(domains)
+
     try:
         if lineage is not None:
             # Renewal, where we already know the specific lineage we're
